@@ -6,6 +6,8 @@ package net.minecraftforge.gradle.internal;
 
 import net.minecraftforge.gradleutils.shared.SharedUtil;
 import net.minecraftforge.srgutils.MinecraftVersion;
+
+import java.io.File;
 import org.codehaus.groovy.runtime.StringGroovyMethods;
 import org.gradle.api.NamedDomainObjectSet;
 import org.gradle.api.artifacts.Configuration;
@@ -69,9 +71,38 @@ final class Util extends SharedUtil {
         return null;
     }
 
+    /// A token whose value depends on arguments supplied in the template, e.g. {@code {source_roots,separator=path}}.
+    ///
+    /// The argument map contains every {@code key=value} pair parsed from the token (an argument with no {@code =}
+    /// maps to an empty string). Implementations should treat a missing/blank argument as "use the default".
+    @FunctionalInterface
+    interface Token {
+        String resolve(Map<String, String> args);
+    }
+
+    /// Resolves the {@code separator} token argument to an actual delimiter string.
+    ///
+    /// Accepts {@code path} (the platform path separator), {@code newline}/{@code line} (the platform line
+    /// separator), {@code space}, {@code none}/{@code empty}, or a literal value. Returns {@code def} when the
+    /// argument is absent or blank.
+    static String resolveSeparator(Map<String, String> args, String def) {
+        var sep = args.get("separator");
+        if (sep == null || sep.isBlank())
+            return def;
+        return switch (sep) {
+            case "path" -> File.pathSeparator;
+            case "newline", "line" -> System.lineSeparator();
+            case "space" -> " ";
+            case "none", "empty" -> "";
+            default -> sep;
+        };
+    }
+
     // Copied straight from FG6
     // Replace tokens in a string that are wrapped in {}
     // Supports escaping {} or \ using \
+    // Tokens may carry comma-separated arguments: {name,key=value,flag}. These are parsed into a Map<String,String>
+    // (a bare flag maps to "") and passed to any matching Token. The plain {name} form yields an empty argument map.
     static String replaceTokens(Map<String, ?> tokens, String value, @Nullable Set<String> unknown) {
         if (value.length() <= 2 || value.indexOf('{') == -1)
             return value;
@@ -108,14 +139,25 @@ final class Util extends SharedUtil {
                 if (c == '\'')
                     buf.append(key);
                 else {
-                    Object v = tokens.get(key.toString());
-                    if (v instanceof Supplier)
+                    var raw = key.toString();
+                    var name = raw;
+                    Map<String, String> args = Map.of();
+                    var comma = raw.indexOf(',');
+                    if (comma >= 0) {
+                        name = raw.substring(0, comma);
+                        args = parseTokenArgs(raw.substring(comma + 1));
+                    }
+
+                    Object v = tokens.get(name);
+                    if (v instanceof Token token)
+                        v = token.resolve(args);
+                    else if (v instanceof Supplier)
                         v = ((Supplier<?>) v).get();
 
                     if (v == null) {
                         if (unknown != null)
-                            unknown.add(key.toString());
-                        buf.append('{').append(key).append('}');
+                            unknown.add(name);
+                        buf.append('{').append(raw).append('}');
                     } else {
                         buf.append(v);
                     }
@@ -126,6 +168,19 @@ final class Util extends SharedUtil {
         }
 
         return buf.toString();
+    }
+
+    private static Map<String, String> parseTokenArgs(String args) {
+        var ret = new java.util.LinkedHashMap<String, String>();
+        for (var part : args.split(",")) {
+            if (part.isBlank()) continue;
+            var eq = part.indexOf('=');
+            if (eq < 0)
+                ret.put(part.trim(), "");
+            else
+                ret.put(part.substring(0, eq).trim(), part.substring(eq + 1).trim());
+        }
+        return ret;
     }
 
     private static final MinecraftVersion UNOBFED_START = MinecraftVersion.from("26.1-snapshot-1");
