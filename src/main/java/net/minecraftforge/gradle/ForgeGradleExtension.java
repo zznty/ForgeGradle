@@ -32,6 +32,36 @@ public interface ForgeGradleExtension {
     Action<MavenArtifactRepository> getForgeMaven();
 
     /**
+     * A closure for the NeoForge maven to be passed into
+     * {@link org.gradle.api.artifacts.dsl.RepositoryHandler#maven(Closure)}.
+     * <p>Required when resolving a {@code net.neoforged:neoforge} Minecraft dependency, as it hosts NeoForge
+     * and its libraries.</p>
+     * <pre><code>
+     * repositories {
+     *     maven fg.neoForgeMaven
+     * }
+     * </code></pre>
+     *
+     * @return The closure
+     */
+    Action<MavenArtifactRepository> getNeoForgeMaven();
+
+    /**
+     * A closure for the Fabric maven to be passed into
+     * {@link org.gradle.api.artifacts.dsl.RepositoryHandler#maven(Closure)}.
+     * <p>Required when resolving a {@code net.fabricmc:fabric} Minecraft dependency, as it hosts fabric-loader
+     * and its libraries.</p>
+     * <pre><code>
+     * repositories {
+     *     maven fg.fabricMaven
+     * }
+     * </code></pre>
+     *
+     * @return The closure
+     */
+    Action<MavenArtifactRepository> getFabricMaven();
+
+    /**
      * A closure for the Minecraft libraries maven to be passed into
      * {@link org.gradle.api.artifacts.dsl.RepositoryHandler#maven(Closure)}.
      * <p>Declaring this in your buildscript is <strong>required</strong> for the Minecraft dependencies to resolve

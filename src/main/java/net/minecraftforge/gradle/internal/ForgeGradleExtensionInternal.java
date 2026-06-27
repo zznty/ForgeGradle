@@ -27,6 +27,26 @@ interface ForgeGradleExtensionInternal extends ForgeGradleExtension, HasPublicTy
         return forgeMaven;
     }
 
+    Action<MavenArtifactRepository> neoForgeMaven = repo -> {
+        repo.setName("NeoForge");
+        repo.setUrl(Constants.NEOFORGE_MAVEN);
+    };
+
+    @Override
+    default Action<MavenArtifactRepository> getNeoForgeMaven() {
+        return neoForgeMaven;
+    }
+
+    Action<MavenArtifactRepository> fabricMaven = repo -> {
+        repo.setName("Fabric");
+        repo.setUrl(Constants.FABRIC_MAVEN);
+    };
+
+    @Override
+    default Action<MavenArtifactRepository> getFabricMaven() {
+        return fabricMaven;
+    }
+
     Action<MavenArtifactRepository> minecraftLibsMaven = repo -> {
         repo.setName("Minecraft libraries");
         repo.setUrl(Constants.MC_LIBS_MAVEN);

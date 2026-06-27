@@ -9,7 +9,12 @@ import net.minecraftforge.gradleutils.shared.Tool;
 final class Tools {
     private Tools() { }
 
+    /// Our Reposilite maven, the default source for the (zznty-published) tool artifacts below.
+    private static final String ZZNTY_MAVEN = "https://maven.zznty.ru/releases/";
+
+    // SlimeLauncher is unchanged from upstream (we publish no fork of it), so it still comes from Forge maven.
     static final Tool SLIMELAUNCHER = Tool.ofForge("slimelauncher", "net.minecraftforge:slime-launcher:0.2.2", 8, "net.minecraftforge.launcher.Main");
 
-    static final Tool MAVENIZER = Tool.ofForge("mavenizer", "net.minecraftforge:minecraft-mavenizer:0.5.19", 25, "net.minecraftforge.mcmaven.cli.Main");
+    // The multi-loader-capable Mavenizer fork, published under net.zznty on our maven.
+    static final Tool MAVENIZER = Tool.of("mavenizer", ZZNTY_MAVEN, "net.zznty:minecraft-mavenizer:0.5.25", 25, "net.minecraftforge.mcmaven.cli.Main");
 }

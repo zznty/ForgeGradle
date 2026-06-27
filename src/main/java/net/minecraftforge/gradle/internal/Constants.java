@@ -12,6 +12,8 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
 final class Constants {
     static final String FORGE_MAVEN = "https://maven.minecraftforge.net/";
     static final String MC_LIBS_MAVEN = "https://libraries.minecraft.net/";
+    static final String NEOFORGE_MAVEN = "https://maven.neoforged.net/releases/";
+    static final String FABRIC_MAVEN = "https://maven.fabricmc.net/";
 
     /// Use these with [java.text.MessageFormat#format(String, Object...)].
     static final class Messages {
