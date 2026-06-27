@@ -16,5 +16,5 @@ final class Tools {
     static final Tool SLIMELAUNCHER = Tool.ofForge("slimelauncher", "net.minecraftforge:slime-launcher:0.2.2", 8, "net.minecraftforge.launcher.Main");
 
     // The multi-loader-capable Mavenizer fork, published under net.zznty on our maven.
-    static final Tool MAVENIZER = Tool.of("mavenizer", ZZNTY_MAVEN, "net.zznty:minecraft-mavenizer:0.5.25", 25, "net.minecraftforge.mcmaven.cli.Main");
+    static final Tool MAVENIZER = Tool.of("mavenizer", ZZNTY_MAVEN, "net.zznty:minecraft-mavenizer:0.5.26", 25, "net.minecraftforge.mcmaven.cli.Main");
 }
