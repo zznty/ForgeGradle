@@ -113,8 +113,8 @@ gradlePlugin {
     vcsUrl = gitversion.url + '.git'
 
     plugins.register('forgegradle') {
-        // Renamed plugin id (net.zznty.gradle) to disambiguate from upstream net.minecraftforge.gradle.
-        id = 'net.zznty.gradle'
+        // Renamed plugin id (net.zznty.forgegradle) to disambiguate from upstream net.minecraftforge.gradle.
+        id = 'net.zznty.forgegradle'
         implementationClass = 'net.minecraftforge.gradle.internal.ForgeGradlePluginEntry'
         displayName = gradleutils.displayName.get()
         description = project.description
