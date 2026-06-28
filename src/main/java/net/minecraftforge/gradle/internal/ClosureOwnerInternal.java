@@ -131,6 +131,26 @@ interface ClosureOwnerInternal<D> extends ClosureOwner {
         }
 
         @Override
+        default ConfigurableFileCollection getAccessWidener() {
+            return this.getOwnerDelegate().getAccessWidener();
+        }
+
+        @Override
+        default ConfigurableFileCollection getAccessWideners() {
+            return this.getOwnerDelegate().getAccessWideners();
+        }
+
+        @Override
+        default void setAccessWidener(String accessWidener) {
+            this.getOwnerDelegate().setAccessWidener(accessWidener);
+        }
+
+        @Override
+        default void setAccessWidener(boolean accessWidener) {
+            this.getOwnerDelegate().setAccessWidener(accessWidener);
+        }
+
+        @Override
         default boolean isChanging() {
             throw stub();
         }

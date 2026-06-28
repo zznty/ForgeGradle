@@ -24,4 +24,21 @@ interface MinecraftAccessTransformersContainerInternal extends MinecraftAccessTr
         else
             this.getAccessTransformerPath().unset();
     }
+
+    // ─── Access Widener ───
+
+    Property<String> getAccessWidenerPath();
+
+    @Override
+    default void setAccessWidener(String accessWidener) {
+        this.getAccessWidenerPath().set(accessWidener);
+    }
+
+    @Override
+    default void setAccessWidener(boolean accessWidener) {
+        if (accessWidener)
+            this.getAccessWidenerPath().set(DEFAULT_ACCESS_WIDENER_PATH);
+        else
+            this.getAccessWidenerPath().unset();
+    }
 }

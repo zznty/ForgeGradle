@@ -184,6 +184,10 @@ abstract class MinecraftExtensionImpl implements MinecraftExtensionInternal {
         private final ConfigurableFileCollection accessTransformer = getObjects().fileCollection();
         private final Property<String> accessTransformerPath = getObjects().property(String.class);
 
+        // Access Wideners
+        private final ConfigurableFileCollection accessWidener = getObjects().fileCollection();
+        private final Property<String> accessWidenerPath = getObjects().property(String.class);
+
         // Facades
         private final ConfigurableFileCollection facades = getObjects().fileCollection();
         // Extra Mavenizer Arguments
@@ -282,6 +286,16 @@ abstract class MinecraftExtensionImpl implements MinecraftExtensionInternal {
         @Override
         public Property<String> getAccessTransformerPath() {
             return this.accessTransformerPath;
+        }
+
+        @Override
+        public ConfigurableFileCollection getAccessWidener() {
+            return this.accessWidener;
+        }
+
+        @Override
+        public Property<String> getAccessWidenerPath() {
+            return this.accessWidenerPath;
         }
 
         @Override
@@ -451,9 +465,14 @@ abstract class MinecraftExtensionImpl implements MinecraftExtensionInternal {
                         minecraftDependency.finalizeAccessTransformers(sourceSets);
 
                         for (var at : minecraftDependency.getAccessTransformer()) {
-                            //System.out.println("Access Transformer: " + at);
                             ret.add("--access-transformer");
                             ret.add(at.getAbsolutePath());
+                        }
+
+                        minecraftDependency.finalizeAccessWideners(sourceSets);
+                        for (var aw : minecraftDependency.getAccessWidener()) {
+                            ret.add("--access-widener");
+                            ret.add(aw.getAbsolutePath());
                         }
 
                         var mappings = minecraftDependency.getMappings();

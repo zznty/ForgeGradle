@@ -52,6 +52,10 @@ abstract class MinecraftDependencyImpl implements MinecraftDependencyInternal {
     private final ConfigurableFileCollection accessTransformer = this.getObjects().fileCollection();
     private final Property<String> accessTransformerPath = this.getObjects().property(String.class);
 
+    // Access Wideners
+    private final ConfigurableFileCollection accessWidener = this.getObjects().fileCollection();
+    private final Property<String> accessWidenerPath = this.getObjects().property(String.class);
+
     // Facades
     private final ConfigurableFileCollection facade = this.getObjects().fileCollection();
     // Extra Mavenizer Arguments
@@ -157,6 +161,16 @@ abstract class MinecraftDependencyImpl implements MinecraftDependencyInternal {
     @Override
     public Property<String> getAccessTransformerPath() {
         return this.accessTransformerPath;
+    }
+
+    @Override
+    public ConfigurableFileCollection getAccessWidener() {
+        return this.accessWidener;
+    }
+
+    @Override
+    public Property<String> getAccessWidenerPath() {
+        return this.accessWidenerPath;
     }
 
     @Override
@@ -273,6 +287,7 @@ abstract class MinecraftDependencyImpl implements MinecraftDependencyInternal {
         });
 
         finalizeAccessTransformers(sourceSets);
+        finalizeAccessWideners(sourceSets);
     }
 
     void finalizeAccessTransformers(NamedDomainObjectSet<SourceSet> sourceSets) {
@@ -293,6 +308,25 @@ abstract class MinecraftDependencyImpl implements MinecraftDependencyInternal {
                 // in which case, just best guess the location for accesstransformer.cfg
                 var sourceSetName = sourceSet.getName();
                 this.accessTransformer.setFrom(this.getProjectLayout().getProjectDirectory().file(this.accessTransformerPath.map(atPath -> "src/" + sourceSetName + "/resources/" + atPath)));
+            }
+        }
+    }
+
+    void finalizeAccessWideners(NamedDomainObjectSet<SourceSet> sourceSets) {
+        if (this.accessWidener.isEmpty() && !this.accessWidenerPath.isPresent()) {
+            this.accessWidener.convention(minecraft.getAccessWidener());
+            this.accessWidenerPath.convention(minecraft.getAccessWidenerPath());
+        }
+
+        if (this.accessWidener.isEmpty() && this.accessWidenerPath.isPresent() && !sourceSets.isEmpty()) {
+            var sourceSet = sourceSets.iterator().next();
+            var itor = sourceSet.getResources().getSrcDirs().iterator();
+            if (itor.hasNext()) {
+                var file = itor.next();
+                this.accessWidener.setFrom(this.getProjectLayout().file(this.accessWidenerPath.map(awPath -> new File(file, awPath))));
+            } else {
+                var sourceSetName = sourceSet.getName();
+                this.accessWidener.setFrom(this.getProjectLayout().getProjectDirectory().file(this.accessWidenerPath.map(awPath -> "src/" + sourceSetName + "/resources/" + awPath)));
             }
         }
     }
