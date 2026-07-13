@@ -277,6 +277,15 @@ abstract class MinecraftDependencyImpl implements MinecraftDependencyInternal {
 
     @Override
     public void handle(NamedDomainObjectSet<SourceSet> sourceSets, NamedDomainObjectSet<SourceSet> allSourceSets) {
+        // The standalone configuration backing run configs' 'minecraft_classpath' is a detached
+        // configuration, so the project-wide `configureEach { withDependencies }` hook in the Minecraft
+        // extension never applies the declared-mappings substitution to it. Without it, a non-official
+        // mappings channel (e.g. parchment) leaves the NeoForge/Forge module ambiguous between its
+        // official and mapped variants, which breaks run tasks (and the configuration cache). Apply the
+        // same handling here, where the mavenizer instance and declared mappings are finalized.
+        if (this.selfConfig != null)
+            this.handle(this.selfConfig);
+
         var runs = Objects.requireNonNullElseGet(this.getRuns(), () -> getObjects().domainObjectContainer(SlimeLauncherOptionsImpl.class));
         ((NamedDomainObjectContainer<SlimeLauncherOptionsImpl>) runs).addAll((NamedDomainObjectContainer<SlimeLauncherOptionsImpl>) minecraft.getRuns());
 
