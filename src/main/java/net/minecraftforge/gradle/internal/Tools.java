@@ -17,5 +17,5 @@ final class Tools {
 
     // The multi-loader-capable Mavenizer fork, published under net.zznty on our maven.
     // Tool.of signature is (name, artifact, repoUrl, javaVersion, mainClass).
-    static final Tool MAVENIZER = Tool.of("mavenizer", "net.zznty:minecraft-mavenizer:0.5.34", ZZNTY_MAVEN, 25, "net.minecraftforge.mcmaven.cli.Main");
+    static final Tool MAVENIZER = Tool.of("mavenizer", "net.zznty:minecraft-mavenizer:0.5.35", ZZNTY_MAVEN, 25, "net.minecraftforge.mcmaven.cli.Main");
 }
