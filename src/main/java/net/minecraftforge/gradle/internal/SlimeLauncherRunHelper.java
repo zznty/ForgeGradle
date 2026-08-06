@@ -50,10 +50,10 @@ class SlimeLauncherRunHelper {
         ret.put("mcp_version", (Supplier<String>) task.getMCPVersion()::get);
         // Source roots historically use the path separator between entries and `%%` between mods (FML).
         ret.put("source_roots", getSourceRoots(task, options, defaultSourceSets, sourceOutputs));
-        // Despite the name this is set to createSrgToMcp.getOutput().get().getAsFile().getAbsolutePath() so.. Srg -> MCP .srg mapping file.
-        // This is taken care of in SlimeLauncher, because I don't want to teach FG about SRG files.
-        // So add a passthrough to make it not output a warning
-        ret.put("mcp_to_srg", (Supplier<String>) () -> "{mcp_to_srg}");
+        // Leave empty: SlimeLauncher generates srg-mcp.srg and sets GradleStart.srg.srg-mcp.
+        // Cleanroom/LegacyDev boot mains also read MCP_TO_SRG and would overwrite that property
+        // if we put a tsrg path or the literal "{mcp_to_srg}" here (blank is treated as absent).
+        ret.put("mcp_to_srg", (Supplier<String>) () -> "");
         return ret;
     }
 
