@@ -12,8 +12,9 @@ final class Tools {
     /// Our Reposilite maven, the default source for the (zznty-published) tool artifacts below.
     private static final String ZZNTY_MAVEN = "https://maven.zznty.ru/releases/";
 
-    // Forked SlimeLauncher: adds TSRG srg-mcp generation for FG2-era FML forks (Cleanroom).
-    static final Tool SLIMELAUNCHER = Tool.of("slimelauncher", "net.zznty:slime-launcher:0.2.3.0", ZZNTY_MAVEN, 8, "net.minecraftforge.launcher.Main");
+    // Forked SlimeLauncher: adds TSRG srg-mcp generation for FG2-era FML forks (Cleanroom),
+    // ELF arch filter for native extraction, and LWJGL/JInput librarypath properties.
+    static final Tool SLIMELAUNCHER = Tool.of("slimelauncher", "net.zznty:slime-launcher:0.2.4.0", ZZNTY_MAVEN, 8, "net.minecraftforge.launcher.Main");
 
     // The multi-loader-capable Mavenizer fork, published under net.zznty on our maven.
     // Tool.of signature is (name, artifact, repoUrl, javaVersion, mainClass).
