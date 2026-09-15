@@ -14,9 +14,11 @@ final class Tools {
 
     // Forked SlimeLauncher: TSRG srg-mcp for FG2-era FML, ELF filter for LWJGL2 natives.
     // Does not set org.lwjgl.librarypath (LWJGL3 self-extracts from classpath natives jars).
-    static final Tool SLIMELAUNCHER = Tool.of("slimelauncher", "net.zznty:slime-launcher:0.2.5.0", ZZNTY_MAVEN, 8, "net.minecraftforge.launcher.Main");
+    // 0.2.5.3 = first fork build carrying upstream's pre-extracted metadata directory support, which
+    // SlimeLauncherMetadata now depends on (it hands over a directory, not the zip).
+    static final Tool SLIMELAUNCHER = Tool.of("slimelauncher", "net.zznty:slime-launcher:0.2.5.3", ZZNTY_MAVEN, 8, "net.minecraftforge.launcher.Main");
 
     // Multi-loader Mavenizer fork (LWJGL3 :natives-<os> via Patcher.forAllLibraries).
     // Tool.of signature is (name, artifact, repoUrl, javaVersion, mainClass).
-    static final Tool MAVENIZER = Tool.of("mavenizer", "net.zznty:minecraft-mavenizer:0.5.42", ZZNTY_MAVEN, 25, "net.minecraftforge.mcmaven.cli.Main");
+    static final Tool MAVENIZER = Tool.of("mavenizer", "net.zznty:minecraft-mavenizer:0.5.45", ZZNTY_MAVEN, 25, "net.minecraftforge.mcmaven.cli.Main");
 }
