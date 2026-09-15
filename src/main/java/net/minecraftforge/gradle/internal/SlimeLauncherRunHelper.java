@@ -4,6 +4,7 @@
  */
 package net.minecraftforge.gradle.internal;
 
+import net.minecraftforge.gradle.SlimeLauncherOptions;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
@@ -36,7 +37,7 @@ class SlimeLauncherRunHelper {
         ret.put("natives",  (Supplier<String>) () -> "{natives}");
 
         ret.put("mcp_mappings", (Supplier<String>) task.getMappingChannel().zip(task.getMappingVersion(), (c, v) -> c + '_' + v)::get);
-        var minecraft = getClasspath(task.getMinecraftClasspath());
+        var minecraft = getClasspath(task.getMinecraftClasspath(), options.getExtraLibraries());
         var runtime = getClasspath(task.getRuntimeClasspath());
         var modules = getClasspath(task.getPatcherModules());
         // Classpaths default to the platform path separator.
@@ -65,6 +66,16 @@ class SlimeLauncherRunHelper {
             return ret;
         });
     }
+    private static Supplier<List<String>> getClasspath(FileCollection... collections) {
+        return new Lazy<>(() -> {
+            var set = new LinkedHashSet<String>();
+            for (var files : collections) {
+                for (var file: files.getFiles())
+                    set.add(file.getAbsolutePath());
+            }
+            return new ArrayList<>(set);
+        });
+    }
 
     /// A token that joins the given entries with a caller-selectable separator (default {@code def}).
     private static Util.Token joined(Supplier<List<String>> files, String def) {
@@ -82,6 +93,7 @@ class SlimeLauncherRunHelper {
                 : "_" + Integer.toHexString(sep.hashCode());
             var file = task.getLocalCacheDir().file(name + suffix + "_classpath.txt").get().getAsFile();
             try {
+                Files.createDirectories(file.toPath().getParent());
                 Files.writeString(file.toPath(), String.join(sep, files.get()), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 throw new RuntimeException("Error when writing classpath file: " + file.getAbsolutePath(), e);

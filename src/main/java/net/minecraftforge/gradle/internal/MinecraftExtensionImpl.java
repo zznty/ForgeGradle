@@ -44,6 +44,7 @@ import org.gradle.api.reflect.TypeOf;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.plugins.ide.eclipse.model.EclipseModel;
+import org.jspecify.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -151,21 +152,25 @@ abstract class MinecraftExtensionImpl implements MinecraftExtensionInternal {
         @Inject
         public ForSettingsImpl(ForgeGradlePlugin plugin, Settings settings) {
             super(plugin);
-            settings.getGradle().settingsEvaluated(this::finish);
-        }
-
-        private void finish(Settings settings) {
-            // Attach shared data to Gradle instance (accessible to project)
-            settings.getGradle().getExtensions().add(
-                ForgeGradleSharedData.NAME,
-                new ForgeGradleSharedData(
-                    this.getMappingsProperty().getOrNull()
-                )
-            );
 
             // Add component rules, even if they aren't used
             // RulesMode.PREFER_PROJECT && !projectRules.isEmpty() -> use projectRules
             applyComponentRules(settings.getDependencyResolutionManagement().getComponents());
+
+            // Add shared data to each project before it is evaluated
+            var sharedData = new ForgeGradleSharedData(
+                this.getMappingsProperty().getOrNull()
+            );
+            settings.getGradle().getLifecycle().beforeProject(project -> beforeProject(project, sharedData));
+        }
+
+        // This has to be static for serialization / isolation purposes
+        private static void beforeProject(Project project, ForgeGradleSharedData sharedData) {
+            // Attach shared data to Gradle instance (accessible to project)
+            project.getExtensions().add(
+                ForgeGradleSharedData.NAME,
+                sharedData
+            );
         }
     }
 
@@ -218,7 +223,7 @@ abstract class MinecraftExtensionImpl implements MinecraftExtensionInternal {
                 });
             }
 
-            var sharedData = getProject().getGradle().getExtensions().findByType(ForgeGradleSharedData.class);
+            var sharedData = getProject().getExtensions().findByType(ForgeGradleSharedData.class);
             if (sharedData != null) {
                 this.getMappingsProperty().value(sharedData.mappings());
             }
@@ -465,8 +470,14 @@ abstract class MinecraftExtensionImpl implements MinecraftExtensionInternal {
                         minecraftDependency.finalizeAccessTransformers(sourceSets);
 
                         for (var at : minecraftDependency.getAccessTransformer()) {
-                            ret.add("--access-transformer");
-                            ret.add(at.getAbsolutePath());
+                            var path = at.getAbsolutePath();
+                            //System.out.println("Access Transformer: " + at);
+                            if (path.endsWith(".zip") || path.endsWith(".jar"))
+                                this.problems.reportInvalidAccessTransformerConfig(path);
+                            else {
+                                ret.add("--access-transformer");
+                                ret.add(at.getAbsolutePath());
+                            }
                         }
 
                         minecraftDependency.finalizeAccessWideners(sourceSets);
@@ -501,8 +512,13 @@ abstract class MinecraftExtensionImpl implements MinecraftExtensionInternal {
                                 problems.reportFacadesNotSupported(tool.getModule().toString());
                             } else {
                                 for (var cfg : minecraftDependency.getFacade()) {
-                                    ret.add("--facade-config");
-                                    ret.add(cfg.getAbsolutePath());
+                                    var path = cfg.getAbsolutePath();
+                                    if (path.endsWith(".zip") || path.endsWith(".jar"))
+                                        this.problems.reportInvalidFacadeConfig(path);
+                                    else {
+                                        ret.add("--facade-config");
+                                        ret.add(cfg.getAbsolutePath());
+                                    }
                                 }
                             }
                         }

@@ -24,13 +24,13 @@ gradle.beforeProject { Project project ->
 
 //@formatter:off
 dependencyResolutionManagement.versionCatalogs.register('libs') {
-    version 'gradleutils', '3.4.5'
+    version 'gradleutils', '3.4.9'
 
     plugin 'licenser',       'net.minecraftforge.licenser'    version '1.2.0' // https://plugins.gradle.org/plugin/net.minecraftforge.licenser
     plugin 'gradleutils',    'net.minecraftforge.gradleutils' versionRef 'gradleutils'
     plugin 'gitversion',     'net.minecraftforge.gitversion'  version '3.1.7' // https://plugins.gradle.org/plugin/net.minecraftforge.changelog
     plugin 'changelog',      'net.minecraftforge.changelog'   version '3.2.1' // https://plugins.gradle.org/plugin/net.minecraftforge.changelog
-    plugin 'plugin-publish', 'com.gradle.plugin-publish'      version '2.1.1' // https://plugins.gradle.org/plugin/com.gradle.plugin-publish
+    plugin 'plugin-publish', 'com.gradle.plugin-publish'      version '2.2.1' // https://plugins.gradle.org/plugin/com.gradle.plugin-publish
     plugin 'shadow',         'com.gradleup.shadow'            version '9.3.0' // https://plugins.gradle.org/plugin/com.gradleup.shadow
 
     // Static Analysis
@@ -50,11 +50,14 @@ dependencyResolutionManagement.versionCatalogs.register('libs') {
 
     library 'utils-data',     'net.minecraftforge', 'json-data-utils' version '0.4.1'  // https://files.minecraftforge.net/net/minecraftforge/json-data-utils/index.html
     library 'utils-os',       'net.minecraftforge', 'os-utils'        version '0.1.0'  // https://files.minecraftforge.net/net/minecraftforge/os-utils/index.html
-    library 'utils-hash',     'net.minecraftforge', 'hash-utils'      version '0.1.12' // https://files.minecraftforge.net/net/minecraftforge/hash-utils/index.html
+    library 'utils-hash',     'net.minecraftforge', 'hash-utils'      version '0.2.3' // https://files.minecraftforge.net/net/minecraftforge/hash-utils/index.html
     library 'utils-download', 'net.minecraftforge', 'download-utils'  version '0.4.0'  // https://files.minecraftforge.net/net/minecraftforge/download-utils/index.html
     bundle 'utils', ['utils-data', 'utils-os', 'utils-hash', 'utils-download']
 
     // Used to compare Minecraft Versions
     library 'srgutils', 'net.minecraftforge', 'srgutils' version '0.6.5'
+
+    // Used to parse mods.toml to locate access transformer locations
+    library 'toml', 'com.github.jezza', 'toml' version '1.2'
 }
 //@formatter:on
