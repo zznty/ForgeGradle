@@ -10,7 +10,7 @@ final class Tools {
     private Tools() { }
 
     /// Our Reposilite maven, the default source for the (zznty-published) tool artifacts below.
-    private static final String ZZNTY_MAVEN = "https://maven.zznty.ru/releases/";
+    private static final String ZZNTY_MAVEN = "https://maven.zznty.net/releases/";
 
     // Forked SlimeLauncher: TSRG srg-mcp for FG2-era FML, ELF filter for LWJGL2 natives.
     // Does not set org.lwjgl.librarypath (LWJGL3 self-extracts from classpath natives jars).

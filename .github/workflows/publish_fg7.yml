@@ -32,7 +32,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # Publishes the plugin + its plugin marker (net.zznty.gradle) to maven.zznty.ru. We don't push to the
+      # Publishes the plugin + its plugin marker (net.zznty.gradle) to maven.zznty.net. We don't push to the
       # Gradle Plugin Portal, so `publishPlugins` is intentionally omitted.
       - name: Build and publish
         run: ./gradlew check publish --no-configuration-cache
